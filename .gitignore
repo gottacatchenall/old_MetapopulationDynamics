@@ -1,0 +1,13 @@
+*.pdf
+tex_output/
+*.gz
+*.bbl
+*.out
+*.aux
+*.fls
+*.fdb_latexmk
+*.blg
+*.toc
+.RData
+.Rhistory
+*.csv
