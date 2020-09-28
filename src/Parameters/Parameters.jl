@@ -2,7 +2,7 @@ module Parameters
     # -------------------------------------------------------------
     #   Libraries
     # -------------------------------------------------------------
-    using ..DPE: Metapopulations, Dispersal
+    using ..MetapopulationDynamics
     using Distributions
 
 

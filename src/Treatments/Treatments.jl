@@ -2,7 +2,7 @@ module Treatments
     # -------------------------------------------------------------
     #   Libraries
     # -------------------------------------------------------------
-    using ..DPE
+    using ..MetapopulationDynamics
     using DataFrames
     using ProgressMeter
 

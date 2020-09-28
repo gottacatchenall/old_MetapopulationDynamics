@@ -1,5 +1,5 @@
 module Dispersal
-    using ..DPE
+    using ..MetapopulationDynamics
     using Distributions
     # -----------------------------------------------------------
     # Types

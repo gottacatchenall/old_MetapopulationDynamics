@@ -1,5 +1,5 @@
 module SummaryStats
-    using ..DPE
+    using ..MetapopulationDynamics
     using StatsBase 
     abstract type SummaryStat end
     include(joinpath(".", "types.jl"))

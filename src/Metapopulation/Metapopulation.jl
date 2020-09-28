@@ -1,7 +1,7 @@
 
 module Metapopulations
     using Distributions, Distances
-    using ..DPE
+    using ..MetapopulationDynamics
 
     # -----------------------------------------------------------
     # Types
