@@ -16,5 +16,10 @@ module Dynamics
     # -----------------------------------------------------------
     # export
     # -----------------------------------------------------------
-    export DynamicsModel, DynamicsInstance, SimulationSettings, StochasticLogisticWDiffusion
+    export  DynamicsModel, 
+            DynamicsInstance, 
+            SimulationSettings, 
+            StochasticLogisticWDiffusion,
+            RickerModel,
+            RickerParameterBundle
 end

@@ -25,6 +25,4 @@ module Treatments
             Treatment,
             TreatmentSet
 
-
-
 end

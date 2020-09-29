@@ -1,3 +1,17 @@
+function run_treatment(treatment::Treatment)
+    num_replicates::Int64 = treatment.number_of_replicates
+
+    for r in 1:num_replicates
+
+    end
+
+end
+
+function draw_instance_from_treatment(treatment::Treatment)
+    # treatment.model(treatment.simulation_parameters)
+    inst = treatment.model(inst)
+end
+
 
 # =================================================
 #    treatment runner

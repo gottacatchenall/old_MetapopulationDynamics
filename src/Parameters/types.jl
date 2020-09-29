@@ -33,10 +33,9 @@ abstract type ParameterValues end
 """
 struct Parameter
     distribution::Distribution
-    hyperparameters::Vector{Parameter}
     dimensionality::Int64
-    Parameter(distribution::Distribution, dimensionality::Int64; hyperparameters=[])  = new(distribution, hyperparameters, dimensionality)
-    Parameter(distribution::Distribution; dimensionality=1) = new(distribution, [], dimensionality)
+    Parameter(distribution::Distribution; dimensionality=1) = new(distribution, dimensionality)
+    Parameter(value::Number; dimensionality = 1) = new(Normal(value, 0.0), dimensionality)
 end
 Base.show(io::IO, p::Parameter) = print(io, "Parameter ~ ", p.distribution, "\n")
 

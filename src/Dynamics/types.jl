@@ -5,6 +5,7 @@
 """
 abstract type DynamicsModel end
 struct StochasticLogisticWDiffusion <: DynamicsModel end
+struct RickerModel <: DynamicsModel end
 
 """
     SimulationSettings()
@@ -28,11 +29,10 @@ SimulationSettings(; number_of_timesteps = 100, timestep_width=0.1, log_frequenc
     An instance of a treatment, which contains the resulting
     abundance matrix.
 """
-mutable struct DynamicsInstance{T}
+mutable struct DynamicsInstance
     metapopulation::Metapopulation
-    dx_dt::T
-    simulation_parameters::SimulationSettings
     parameter_values::ParameterValues
+    simulation_parameters::SimulationSettings
     abundance_matrix::Array{Float64,2}
     state::Array{Float64}
 end
@@ -44,6 +44,26 @@ DynamicsInstance(;  metapopulation = get_random_metapopulation(),
                     abundance_matrix = zeros(get_number_populations(metapopulation), simulation_settings.number_of_timesteps),
                     state = zeros(get_number_populations(metapopulation), simulation_settings.number_of_timesteps)
                    ) = DynamicsInstance(metapopulation, dx_dt, simulation_settings, parameter_values, abundance_matrix, rand(Uniform(), get_number_populations(metapopulation)))
+
+"""
+    RickerParameterBundle
+    -----------------------------------------------------------
+    A parameter bundle for the Ricker model. 
+
+"""
+struct RickerParameterBundle <: ParameterBundle
+    lambda::Parameter 
+    predation_strength::Parameter
+    migration_probability::Parameter
+    reproduction_probability::Parameter
+end
+
+RickerParameterBundle(;     lambda = Parameter(15),
+                            predation_strength = Parameter(0.1),
+                            migration_probability = Parameter(0.1),
+                            reproduction_probability = Parameter(0.9) 
+                           ) = RickerParameterBundle(lambda, predation_strength, migration_probability, reproduction_probability)
+
 
 """
     RickerParameterValues

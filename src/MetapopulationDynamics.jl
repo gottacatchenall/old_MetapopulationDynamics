@@ -52,7 +52,10 @@ module MetapopulationDynamics
         using .Dynamics
         export  StochasticLogisticWDiffusion,
                 SimulationSettings,
-                DynamicsInstance
+                DynamicsInstance,
+                DynamicsModel,
+                RickerModel,
+                RickerParameterBundle
 
         # -----------------------------------------------------------
         # Treatments
