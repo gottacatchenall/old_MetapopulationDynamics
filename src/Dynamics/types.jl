@@ -5,8 +5,9 @@
 """
 abstract type DynamicsModel end
 struct StochasticLogisticWDiffusion <: DynamicsModel end
-struct RickerModel <: DynamicsModel end
 
+
+struct RickerModel <: DynamicsModel end
 """
     SimulationSettings()
     ----------------------------------------------------
@@ -29,21 +30,16 @@ SimulationSettings(; number_of_timesteps = 100, timestep_width=0.1, log_frequenc
     An instance of a treatment, which contains the resulting
     abundance matrix.
 """
-mutable struct DynamicsInstance
+mutable struct DynamicsInstance{T <: DynamicsModel, W <: Number}
+    model::T
     metapopulation::Metapopulation
     parameter_values::ParameterValues
     simulation_parameters::SimulationSettings
-    abundance_matrix::Array{Float64,2}
-    state::Array{Float64}
+    abundance_matrix::Array{W,2}
+    state::Vector{W}
 end
 
-DynamicsInstance(;  metapopulation = get_random_metapopulation(),
-                    dx_dt = StochasticLogisticWDiffusion,
-                    simulation_settings=SimulationSettings(),
-                    parameter_values = StochasticLogisticParameterValues(),
-                    abundance_matrix = zeros(get_number_populations(metapopulation), simulation_settings.number_of_timesteps),
-                    state = zeros(get_number_populations(metapopulation), simulation_settings.number_of_timesteps)
-                   ) = DynamicsInstance(metapopulation, dx_dt, simulation_settings, parameter_values, abundance_matrix, rand(Uniform(), get_number_populations(metapopulation)))
+
 
 """
     RickerParameterBundle
@@ -72,43 +68,42 @@ RickerParameterBundle(;     lambda = Parameter(15),
 """
 
 struct RickerParameterValues <: ParameterValues
-    mortality_probability::Float64
+    lambda::Float64
     predation_strength::Float64 
     migration_probability::Float64
-    base_offspring_per_indiv::Float64
-    num_timesteps::Int64
-    log_frequency::Int64
+    reproduction_probability::Float64
 end
 
 RickerParameterValues(; 
-                   mortality_probability::Number = 0.1,
+                   lambda::Number = 10,
                    predation_strength::Number = 0.03,
                    migration_probability::Number = 0.01,
-                   base_offspring_per_indiv::Number = 3,
-                   num_timesteps::Number = 1000,
-                   log_frequency::Number = 10
-                  ) = RickerParameterValues(mortality_probability, predation_strength, migration_probability, base_offspring_per_indiv, num_timesteps, log_frequency)
+                   reproduction_probability::Number = 0.9,
+                  ) = RickerParameterValues(lambda, predation_strength, migration_probability, reproduction_probability)
 
-"""
-    IBMInstance
-    -----------------------------------------------------------
-    An instance of the IBM 
-"""
-struct RickerInstance 
-    metapopulation::Metapopulation
-    parameters::RickerParameterValues
-    dispersal_potential::DispersalPotential
-    get_new_abundance::Function
-    state::Vector{Int}
+RickerParameterValues(bundle::ParameterBundle) = 
+            RickerParameterValues(
+                lambda = draw_from_parameter(bundle.lambda),
+                predation_strength = draw_from_parameter(bundle.predation_strength),
+                migration_probability = draw_from_parameter(bundle.migration_probability),
+                reproduction_probability = draw_from_parameter(bundle.reproduction_probability)
+            )
+
+function draw_parameter_values(bundle::RickerParameterBundle)
+    return RickerParameterValues(bundle)
 end
 
-RickerInstance(;
-            metapopulation=get_random_metapopulation(), 
-            parameters = RickerParameterValues(),
-            get_new_abundance = ricker_demographic_stochasticity,
-            state = []
-           ) =  RickerInstance(metapopulation, 
-                            parameters, 
-                            get_dispersal_potential(metapopulation), 
-                            get_new_abundance, 
-                            rand(DiscreteUniform(10, 100), get_number_populations(metapopulation)))
+
+
+function create_dynamics_model_instance(;
+                model::RickerModel = RickerModel,
+                metapopulation::Metapopulation=get_random_metapopulation(), 
+                parameter_values::ParameterValues=RickerParameterValues(),
+                simulation_settings::SimulationSettings = SimulationSettings(),
+                abundance_matrix = Array{Float64,2}(zeros(get_number_populations(metapopulation), simulation_settings.number_of_timesteps)),
+                state = Vector{Float64}(rand(DiscreteUniform(10,100), get_number_populations(metapopulation))))
+    DynamicsInstance(model, metapopulation, parameter_values, simulation_settings, abundance_matrix, state)
+end
+
+
+

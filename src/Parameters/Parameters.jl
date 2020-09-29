@@ -19,6 +19,7 @@ module Parameters
     export  Parameter,
             ParameterBundle,
             ParameterValues
-
+    
+    export draw_from_parameter
 
 end

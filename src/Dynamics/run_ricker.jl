@@ -1,8 +1,13 @@
-function run_dispersal_stochastic(inst::RickerInstance)
+function ricker_demographic_stochasticity(old_abundance; lambda::Float64 = 5.0, reproduction_probability::Float64 = 0.9, predation_strength::Float64 = 0.1)
+    poisson_rate = old_abundance * lambda* (reproduction_probability) * exp(-1*predation_strength*old_abundance)
+    return rand(Poisson(poisson_rate))
+end
+
+function run_dispersal_stochastic(inst::DynamicsInstance)
         num_populations = get_number_populations(inst.metapopulation)
         old_abundance_vector = inst.state
         new_abundance_vector::Vector{Int64} = zeros(num_populations)
-        mig_prob::Float64 = inst.parameters.migration_probability
+        mig_prob::Float64 = inst.parameter_values.migration_probability
         for p = 1:num_populations
             leaving_p_ct = 0
             for i = 1:old_abundance_vector[p]
@@ -24,7 +29,7 @@ function run_dispersal_stochastic(inst::RickerInstance)
         end
 end
 
-function run_dispersal_diffusion(inst::RickerInstance)
+function run_dispersal_diffusion(inst::DynamicsInstance)
     num_populations = get_number_populations(inst.metapopulation)
     new_state::Array{Float64} = [inst.state[p] for p in 1:num_populations]
 
@@ -51,7 +56,7 @@ function run_dispersal_diffusion(inst::RickerInstance)
 end
 
 
-function run_local_dynamics(inst::RickerInstance)
+function run_local_dynamics(inst::DynamicsInstance)
     num_populations = get_number_populations(inst.metapopulation)
     for p = 1:num_populations
         inst.state[p] = inst.get_new_abundance(inst.state[p], 
@@ -62,26 +67,22 @@ function run_local_dynamics(inst::RickerInstance)
     end
 end
 
-function run_ricker_timestep(inst::RickerInstance)
+function run_ricker_timestep(inst::DynamicsInstance)
     run_local_dynamics(inst)
     #run_dispersal_diffusion(inst)
     run_dispersal_stochastic(inst)
 end
 
-function RickerModel(inst::RickerInstance)
+function RickerModel(inst::DynamicsInstance)
     num_populations = get_number_populations(inst.metapopulation)
-    num_timesteps = inst.parameters.num_timesteps 
-    log_frequency = inst.parameters.log_frequency
+    num_timesteps = inst.simulation_settings.num_timesteps 
+    log_frequency = inst.simulation_settings.log_frequency
 
-    abundance_log = zeros(num_populations, Int(num_timesteps/log_frequency))
     log_pt = 1
     for t = 1:num_timesteps
         run_ricker_timestep(inst)
-
-        if (t % log_frequency == 0)
-            abundance_log[:,log_pt] = inst.state
-            log_pt += 1
-        end
+        abundance_log[:,log_pt] = inst.state
+        log_pt += 1
     end
     @show abundance_log
     return abundance_log

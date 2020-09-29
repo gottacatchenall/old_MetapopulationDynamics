@@ -21,5 +21,8 @@ module Dynamics
             SimulationSettings, 
             StochasticLogisticWDiffusion,
             RickerModel,
-            RickerParameterBundle
+            RickerParameterBundle,
+            RickerParameterValues
+
+    export create_dynamics_model_instance, draw_parameter_values
 end

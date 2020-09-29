@@ -20,9 +20,8 @@ module Treatments
     # export
     # -----------------------------------------------------------
 
-    # types
     export  TreatmentInstance,
             Treatment,
             TreatmentSet
-
+    export draw_instance_from_treatment
 end

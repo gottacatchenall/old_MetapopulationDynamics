@@ -43,7 +43,8 @@ module MetapopulationDynamics
         export  Parameter,
                 ParameterBundle,
                 ParameterValues
-
+    
+        export draw_from_parameter
 
         # -----------------------------------------------------------
         # Dynamics
@@ -55,8 +56,9 @@ module MetapopulationDynamics
                 DynamicsInstance,
                 DynamicsModel,
                 RickerModel,
-                RickerParameterBundle
-
+                RickerParameterBundle,
+                RickerParameterValues
+        export create_dynamics_model_instance, draw_parameter_values
         # -----------------------------------------------------------
         # Treatments
         # -----------------------------------------------------------
@@ -64,7 +66,7 @@ module MetapopulationDynamics
         using .Treatments
         export  Treatment,
                 TreatmentSet
-
+        export draw_instance_from_treatment 
         # -----------------------------------------------------------
         # SumamryStats
         # -----------------------------------------------------------

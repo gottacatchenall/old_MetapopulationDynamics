@@ -39,34 +39,13 @@ struct Parameter
 end
 Base.show(io::IO, p::Parameter) = print(io, "Parameter ~ ", p.distribution, "\n")
 
-
-
-"""
-    StochasticLogisticParameterBundle()
-    ----------------------------------------------------
-    The bundle of parameters for the stochastic
-    logistic Model
-"""
-struct StochasticLogisticParameterBundle <: ParameterBundle
-    num_populations::Int64
-    alpha::Float64
-    migration_rate::Parameter
-    lambda::Parameter
-    sigma::Parameter
-    carrying_capacity::Parameter
+function draw_from_parameter(param::Parameter)
+    vals = rand(param.distribution, param.dimensionality)
+    if (param.dimensionality == 1)
+        return vals[1]
+    else
+        return vals
+    end
 end
 
-"""
-    StochasticLogisticParameterValues()
-    ----------------------------------------------------
-    The value of parameters for an instance of the
-    stochastic logistic model.
-"""
-struct StochasticLogisticParameterValues <: ParameterValues
-    num_populations::Int64
-    alpha::Float64  # dispersal kernel alpha
-    lambda::Vector{Float64} # lambda across pops
-    migration_rate::Vector{Float64} # mig across pops
-    carrying_capacity::Vector{Float64} # K across pops
-    sigma::Vector{Float64} # sigma across pops
-end
+
