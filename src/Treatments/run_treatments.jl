@@ -2,7 +2,9 @@ function run_treatment(treatment::Treatment)
     num_replicates::Int64 = treatment.number_of_replicates
 
     for r in 1:num_replicates
-
+        inst = draw_instance_from_treatment(treatment)
+        run_dynamics_simulation(inst)
+        push!(treatment.instances, inst)
     end
 
 end
@@ -11,6 +13,7 @@ function draw_instance_from_treatment(treatment::Treatment)
     param_values::ParameterValues = draw_parameter_values(treatment.theta)
     inst = create_dynamics_model_instance(model = treatment.model,
                                           metapopulation = treatment.metapopulation,
+                                          dispersal_potential = get_dispersal_potential(treatment.metapopulation),
                                           parameter_values = param_values,
                                           simulation_settings = treatment.simulation_settings)
 end

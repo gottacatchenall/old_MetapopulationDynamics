@@ -28,7 +28,7 @@ Base.show(io::IO, treatment::Treatment) = print(io, "\n\n\nTreatment:  \n", "Pri
 
 Treatment(
           ;     metapopulation = get_random_metapopulation(),
-                instance_maker = RickerModel(),
+                instance_maker = RickerModelWStochasticDispersal(),
                 theta = RickerParameterBundle(),
                 simulation_settings = SimulationSettings(),
                 number_of_replicates = 50,

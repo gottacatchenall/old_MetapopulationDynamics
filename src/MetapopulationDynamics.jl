@@ -43,22 +43,23 @@ module MetapopulationDynamics
         export  Parameter,
                 ParameterBundle,
                 ParameterValues
-    
-        export draw_from_parameter
+
+        export draw_from_parameter, create_dynamics_model_instance
 
         # -----------------------------------------------------------
         # Dynamics
         # -----------------------------------------------------------
         include(joinpath(".", "Dynamics/Dynamics.jl"))
         using .Dynamics
-        export  StochasticLogisticWDiffusion,
-                SimulationSettings,
+        export  DynamicsModel,
                 DynamicsInstance,
-                DynamicsModel,
+                SimulationSettings,
                 RickerModel,
+                RickerModelWDiffusionDispersal,
+                RickerModelWStochasticDispersal,
                 RickerParameterBundle,
                 RickerParameterValues
-        export create_dynamics_model_instance, draw_parameter_values
+        export draw_parameter_values, run_dynamics_simulation
         # -----------------------------------------------------------
         # Treatments
         # -----------------------------------------------------------
@@ -66,7 +67,7 @@ module MetapopulationDynamics
         using .Treatments
         export  Treatment,
                 TreatmentSet
-        export draw_instance_from_treatment 
+        export draw_instance_from_treatment
         # -----------------------------------------------------------
         # SumamryStats
         # -----------------------------------------------------------

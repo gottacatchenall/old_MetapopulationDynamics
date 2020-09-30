@@ -9,20 +9,23 @@ module Dynamics
     # Include methods
     # -----------------------------------------------------------
     include(joinpath("types.jl"))
-    include(joinpath("ricker_model.jl"))
-    include(joinpath("run_ricker.jl"))
-    include(joinpath(".", "StochasticLogisticWDiffusion.jl"))
+    include(joinpath("RickerModel", "ricker_model_types.jl"))
+    include(joinpath("RickerModel", "ricker_model_dynamics.jl"))
+    include(joinpath(".", "constructors.jl"))
+    include(joinpath(".", "run_dynamics.jl"))
+    include(joinpath("StochasticLogistic", "StochasticLogisticWDiffusion.jl"))
 
     # -----------------------------------------------------------
     # export
     # -----------------------------------------------------------
-    export  DynamicsModel, 
-            DynamicsInstance, 
-            SimulationSettings, 
-            StochasticLogisticWDiffusion,
+    export  DynamicsModel,
+            DynamicsInstance,
+            SimulationSettings,
             RickerModel,
+            RickerModelWDiffusionDispersal,
+            RickerModelWStochasticDispersal,
             RickerParameterBundle,
             RickerParameterValues
 
-    export create_dynamics_model_instance, draw_parameter_values
+    export create_dynamics_model_instance, draw_parameter_values, run_dynamics_simulation
 end
