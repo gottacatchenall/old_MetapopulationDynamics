@@ -5,6 +5,8 @@ module Treatments
     using ..MetapopulationDynamics
     using DataFrames
     using ProgressMeter
+    using Distributions: DiscreteUniform
+    using Random: shuffle!
 
 
 
@@ -23,5 +25,5 @@ module Treatments
     export  TreatmentInstance,
             Treatment,
             TreatmentSet
-    export draw_instance_from_treatment
+    export run_treatment, run_treatments, create_treatments_from_param_dictionary
 end

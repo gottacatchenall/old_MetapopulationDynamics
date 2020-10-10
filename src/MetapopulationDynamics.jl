@@ -2,6 +2,7 @@
 module MetapopulationDynamics
 
     # Other libraries
+    using Random
     using StatsBase
     using Distributions
     using DataFrames
@@ -15,12 +16,23 @@ module MetapopulationDynamics
     # -----------------------------------------------------------
 
         # -----------------------------------------------------------
+        # Parameters
+        # -----------------------------------------------------------
+        include(joinpath(".", "Parameters/Parameters.jl"))
+        using .Parameters
+        export  Parameter,
+                ParameterBundle,
+                ParameterValues
+
+        export draw_from_parameter 
+
+        # -----------------------------------------------------------
         # Metapopulation
         # -----------------------------------------------------------
         include(joinpath(".", "Metapopulation/Metapopulation.jl"))
         using .Metapopulations
-        export Metapopulation, Population
-        export  get_random_metapopulation,
+        export Metapopulation, Population, MetapopulationGenerator
+        export  PoissonProcess,
                 get_lattice_metapop,
                 construct_metapopulation_from_coordinates,
                 get_distance_between_pops,
@@ -32,19 +44,9 @@ module MetapopulationDynamics
         # -----------------------------------------------------------
         include(joinpath(".", "Dispersal/Dispersal.jl"))
         using .Dispersal
-        export DispersalPotential, ExpKernel, GaussKernel
-        export get_dispersal_potential, draw_from_dispersal_potential_row
+        export DispersalPotential, DispersalPotentialGenerator, ExpKernel, GaussKernel
+        export IBDandCutoff, draw_from_dispersal_potential_row
 
-        # -----------------------------------------------------------
-        # Parameters
-        # -----------------------------------------------------------
-        include(joinpath(".", "Parameters/Parameters.jl"))
-        using .Parameters
-        export  Parameter,
-                ParameterBundle,
-                ParameterValues
-
-        export draw_from_parameter, create_dynamics_model_instance
 
         # -----------------------------------------------------------
         # Dynamics
@@ -59,7 +61,16 @@ module MetapopulationDynamics
                 RickerModelWStochasticDispersal,
                 RickerParameterBundle,
                 RickerParameterValues
-        export draw_parameter_values, run_dynamics_simulation
+        export draw_parameter_values, run_dynamics_simulation, create_dynamics_model_instance
+
+
+        # -----------------------------------------------------------
+        # SummaryStats
+        # -----------------------------------------------------------
+        include(joinpath(".", "SummaryStats/SummaryStats.jl"))
+        using .SummaryStats
+        export SummaryStat, PCC, MeanAbundance
+
         # -----------------------------------------------------------
         # Treatments
         # -----------------------------------------------------------
@@ -67,14 +78,7 @@ module MetapopulationDynamics
         using .Treatments
         export  Treatment,
                 TreatmentSet
-        export draw_instance_from_treatment
-        # -----------------------------------------------------------
-        # SumamryStats
-        # -----------------------------------------------------------
-        include(joinpath(".", "SummaryStats/SummaryStats.jl"))
-        using .SummaryStats
-        export SummaryStat, PCC
-
+        export run_treatment, run_treatments, create_treatments_from_param_dictionary
 
         # -----------------------------------------------------------
         # ABCSampler

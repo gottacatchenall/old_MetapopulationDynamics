@@ -1,24 +1,60 @@
 
 function check_for_nondefaults(param_dict::Dict)
 
-    # Flag to not generate a random metapopulation every replicate
-        # use-cases:
-        #   - user defined metapopulation provided as CSV
-        #   - only generate a new metapopulation at the Treatment or higher level
+	if haskey(param_dict, "number_of_replicates") == false
+		param_dict["number_of_replicates"] = [50]
+	end
 
-    # Flag to use a defined random seed
-    #
-    #
+	if (haskey(param_dict, "fixed_metapopulation")) == false
+		param_dict["fixed_metapopulation"] = [false]
+	end
 
-    # Flag to use stochastic dispersal, where dispersal events
-    # occur according random draws from a Binomial(abundance, migration_probability).
-    #
+	if (haskey(param_dict, "number_of_populations")) == false
+		param_dict["number_of_populations"] = [10]
+	end
 
-    # Flag to use
+	if haskey(param_dict, "model") == false
+		param_dict["model"] = [RickerModelWStochasticDispersal]
+	end
 
+	if haskey(param_dict, "dispersal_kernel") == false
+		param_dict["dispersal_kernel"] = [ExpKernel]
+	end
+
+	if haskey(param_dict, "alpha") == false
+		param_dict["alpha"] = [3.0]
+	end
+
+	if haskey(param_dict, "epsilon") == false
+		param_dict["epsilon"] = [0.01]
+	end
+
+	if haskey(param_dict, "lambda") == false
+		param_dict["lambda"] = [15.0]
+	end
+
+	if haskey(param_dict, "migration_probability") == false
+		param_dict["migration_probability"] = [0.3]
+	end
+
+	if haskey(param_dict, "reproduction_probability") == false
+		param_dict["reproduction_probability"] = [0.9]
+	end
+
+	if haskey(param_dict, "predation_strength") == false
+		param_dict["predation_strength"] = [0.03]
+	end
+
+	if haskey(param_dict, "random_seed") == false
+		param_dict["random_seed"] = [rand(DiscreteUniform(0, 10^10))]
+	end
+
+	@show param_dict
 end
 
 function create_metadata_df(param_dict::Dict)
+	check_for_nondefaults(param_dict)
+
 	names::Array{String} = []
 	vals = []
 	metadata = DataFrame(names...)

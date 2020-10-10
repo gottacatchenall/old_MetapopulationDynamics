@@ -1,5 +1,5 @@
 struct PCC <: SummaryStat end
-function PCC(abundance_matrix::Array{Float64,2}) 
+function (pcc::PCC)(abundance_matrix::Array{Float64,2})
     n_pops = length(abundance_matrix[:,1])
     mean_cc::Float64 = 0.0
     s::Float64 =0.0
@@ -17,4 +17,3 @@ function PCC(abundance_matrix::Array{Float64,2})
     mean_cc = s/ct
     return mean_cc
 end
-

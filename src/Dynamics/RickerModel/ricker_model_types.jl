@@ -1,8 +1,8 @@
 
 
-struct RickerModel <: DynamicsModel end
-struct RickerModelWStochasticDispersal <: DynamicsModel end
-struct RickerModelWDiffusionDispersal <: DynamicsModel end
+abstract type RickerModel <: DynamicsModel end
+struct RickerModelWStochasticDispersal <: RickerModel end
+struct RickerModelWDiffusionDispersal <: RickerModel end
 
 
 

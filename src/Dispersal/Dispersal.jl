@@ -18,7 +18,8 @@ module Dispersal
         DispersalPotential 
         -----------------------------------------------------------
             A type which holds a matrix of floats, where matrix[i,j]
-            is the probability an individual born in i reproduces in j.
+            is the probability an individual born in i reproduces in j, 
+            given that individual migrates during its lifetime.
             
             Note that this forms a probabiity distribution over j for all i, 
             meaning that sum_j matrix[i,j] = 1 for all i. 
@@ -26,6 +27,20 @@ module Dispersal
     struct DispersalPotential
         matrix::Array{Float64}
     end
+
+    """
+        DispersalPotentialGenerator 
+        -----------------------------------------------------------
+            An abstract type for an object that generates a dispersal potentital according
+            to a set of parameters.
+    """
+    abstract type DispersalPotentialGenerator end
+    struct IBDandCutoff{T <: DispersalKernel} <: DispersalPotentialGenerator 
+        alpha::Parameter
+        epsilon::Parameter
+        kernel::T
+    end
+    IBDandCutoff(; alpha=Parameter(3.0), epsilon=Parameter(0.1), kernel=ExpKernel()) = IBDandCutoff(alpha, epsilon, kernel)
 
 
     # -----------------------------------------------------------
@@ -39,6 +54,8 @@ module Dispersal
     # -----------------------------------------------------------
     export  DispersalPotential, 
             DispersalKernel, 
+            DispersalPotentialGenerator,
+            IBDandCutoff,
             GaussKernel, 
             ExpKernel
 

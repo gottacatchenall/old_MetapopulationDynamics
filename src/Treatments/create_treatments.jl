@@ -12,39 +12,49 @@ function get_dist(item)
 end
 
 
-function create_treatments(param_dict::Dict; replicates_per_treatment::Int64 = 50)
+function create_treatment(model::T, id::Int, metadata::DataFrameRow) where {T <: RickerModel}
+
+	mp = metadata.fixed_metapopulation
+	if (mp == false)
+        mp = PoissonProcess(number_of_populations=metadata.number_of_populations)
+	end
+
+
+	dispersal_potential = IBDandCutoff(
+        alpha = Parameter(metadata.alpha),
+        epsilon= Parameter(metadata.epsilon),
+        kernel=metadata.dispersal_kernel()
+	)
+
+	param_bundle = RickerParameterBundle(
+		lambda = Parameter(metadata.lambda),
+		migration_probability = Parameter(metadata.migration_probability),
+		predation_strength = Parameter(metadata.predation_strength),
+		reproduction_probability = Parameter(metadata.reproduction_probability)
+	)
+
+	simulation_settings = SimulationSettings()
+	return Treatment(	
+                id = id,
+                metapopulation = mp,
+				dispersal_potential = dispersal_potential,
+				model = model,
+				theta = param_bundle,
+				number_of_replicates = metadata.number_of_replicates
+				)
+end
+
+function create_treatments_from_param_dictionary(param_dict::Dict; summary_stat::Union{T, Vector{T}} = PCC(), replicates_per_treatment::Int64 = 50) where T <: SummaryStat
 	metadata::DataFrame = create_metadata_df(param_dict)
 	n_treatments::Int64 = nrow(metadata)
 
 	treatments::Vector{Treatment} = []
 
 	for t = 1:n_treatments
-		num_pops = metadata.num_populations[t]
-		alpha = metadata.alpha[t]
-
-		migration_rate_distribution::Distribution = get_dist(metadata.migration_rate[t])
-		lambda_distribution::Distribution = get_dist(metadata.lambda[t])
-		sigma_distribution::Distribution = get_dist(metadata.sigma[t])
-		carrying_capacity_distribution::Distribution = get_dist(metadata.carrying_capacity[t])
-
-        dimensionality::Int64 = num_pops
-
-		alpha_dist = Parameter(Normal(alpha, 0.0), 1)
-		m_dist = Parameter(migration_rate_distribution, dimensionality)
-		lambda_dist = Parameter(lambda_distribution, dimensionality)
-		sigma_dist = Parameter(sigma_distribution, dimensionality)
-		carrying_cap_dist = Parameter(carrying_capacity_distribution, dimensionality)
-
-		param_bundle = StochasticLogisticParameterBundle(num_pops, alpha, m_dist, lambda_dist, sigma_dist, carrying_cap_dist)
-
-		dynamics_model = StochasticLogisticWDiffusion()
-		sim_params = SimulationParameters(metadata.number_of_timesteps[t], 0.1, 10, false)
-
-		mp = metadata.metapopulation_generator[t](num_populations=num_pops, alpha=alpha)
-
-        tr = Treatment(mp, dynamics_model, sim_params, param_bundle, metadata.summary_stat[t], metadata.log_abundances[t],metadata.log_metapopulations[t] , [])
+		model = metadata.model[t]
+		tr = create_treatment(model, t, metadata[t,:])
 		push!(treatments, tr)
 	end
 
-	return TreatmentSet(metadata, treatments, replicates_per_treatment )
+	return TreatmentSet(metadata, treatments, summary_stat, DataFrame(treatment=[], replicate=[], summary_stat=[]))
 end

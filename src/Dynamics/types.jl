@@ -4,7 +4,6 @@
     An abstract type
 """
 abstract type DynamicsModel end
-struct StochasticLogisticWDiffusion <: DynamicsModel end
 
 """
     SimulationSettings()
